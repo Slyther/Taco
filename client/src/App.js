@@ -1,6 +1,56 @@
 import React, { Component, Fragment } from 'react';
 import './App.scss';
 
+const EntityCreationModal = (props) => {
+  return (
+    <div className="modal fade" id={props.modalId} tabIndex="-1" role="dialog" aria-labelledby={`${props.modalId}Label`} aria-hidden="true">
+      <div className="modal-dialog" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title" id={`${props.modalId}Label`}>{props.title}</h5>
+            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div className="modal-body">
+            <form>
+              <div className="form-group">
+                <label htmlFor="message-text" className="col-form-label">{props.label}</label>
+                <input className="form-control" id={props.valueId} onChange={props.handleChange} value={props.value || ''}></input>
+              </div>
+            </form>
+          </div>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={props.onCreate}>Create</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const CardViewModal = (props) => {
+  return (
+    <div className="modal fade" id={`cardView${props.card._id}`} tabIndex="-1" role="dialog" aria-labelledby={`${props.card._id}Label`} aria-hidden="true">
+      <div className="modal-dialog modal-lg">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title" id={`${props.card._id}Label`}>{props.card.name}</h5>
+            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div className="modal-body">
+            <h5>Description</h5>
+            <p>{props.card.description || ''}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 class App extends Component {
   constructor() {
     super();
@@ -11,51 +61,14 @@ class App extends Component {
       cardView: false,
       cards: [],
       columns: [],
-      currentBoard: ''
+      currentBoard: '',
+      currentBoardId: 0
     };
   }
 
   handleChange = (e) => {
     this.setState({ [e.target.id]: e.target.value })
   }
-
-  submitEntry = () => {
-    const { num1, num2, operator } = this.state;
-    let number1 = Number(num1);
-    let number2 = Number(num2);
-
-    fetch(`http://localhost:5000/api/${operator}`, {
-      method: "POST",
-      headers: [
-        ["Content-Type", "application/json"],
-        ["Accept", "application/json"],
-      ],
-      body: JSON.stringify({ num1: number1, num2: number2 })
-    }).then(response => response.json())
-    .then(response => {
-      if(typeof response.errorMsg !== 'undefined'){
-        this.setState({
-          result: response.errorMsg, 
-          isNum2: false, 
-          isCompletelyDisabled: false, 
-          num1: '', 
-          num2: '', 
-          operator: '', 
-          isDotDisabled: false
-        });
-      } else {
-        this.setState({
-          result: response.result,
-          isNum2: false, 
-          isCompletelyDisabled: false, 
-          num1: `${response.result}`, 
-          num2: '', 
-          operator: '', 
-          isDotDisabled: false
-        });
-      }
-    });
-  };
 
   componentDidMount() {
     fetch(`http://localhost:5000/api/boards/`, {
@@ -64,6 +77,18 @@ class App extends Component {
     .then(response => {
       this.setState({boards: [...response]});
     });
+  }
+
+  returnToBoardsView = () => {
+    this.setState({
+      boardsView: true,
+      boardView: false,
+      cardView: false,
+      cards: [],
+      columns: [],
+      currentBoard: '',
+      currentBoardId: 0
+    })
   }
 
   getBoard(id, name) {
@@ -75,7 +100,7 @@ class App extends Component {
         method: "GET",
       }).then(response2 => response2.json())
       .then(response2 => {
-        this.setState({cards: [...response2], columns: [...response], boardsView: false, boardView: true, currentBoard: name});
+        this.setState({cards: [...response2], columns: [...response], boardsView: false, boardView: true, currentBoard: name, currentBoardId: id});
       });
     });
   }
@@ -90,7 +115,46 @@ class App extends Component {
       body: JSON.stringify({ name: this.state.newBoard })
     }).then(response => response.json())
     .then(response => {
-      this.setState({boards: [...this.state.boards, response]});
+      this.setState({boards: [...this.state.boards, response], newBoard: ''});
+    });
+  }
+
+  createColumn() {
+    fetch(`http://localhost:5000/api/columns/`, {
+      method: "POST",
+      headers: [
+        ["Content-Type", "application/json"],
+        ["Accept", "application/json"],
+      ],
+      body: JSON.stringify({ name: this.state.newColumn, board: this.state.currentBoardId  })
+    }).then(response => response.json())
+    .then(response => {
+      this.setState({columns: [...this.state.columns, response], newColumn: ''});
+    });
+  }
+
+  createCard(columnId) {
+    fetch(`http://localhost:5000/api/cards/`, {
+      method: "POST",
+      headers: [
+        ["Content-Type", "application/json"],
+        ["Accept", "application/json"],
+      ],
+      body: JSON.stringify({ name: this.state.newCard, board: this.state.currentBoardId, column: columnId })
+    }).then(response => response.json())
+    .then(response => {
+      this.setState({cards: [...this.state.cards, response], newCard: ''});
+    });
+  }
+
+  submitColumnChange(id) {
+    fetch(`http://localhost:5000/api/columns/${id}`, {
+      method: "PUT",
+      headers: [
+        ["Content-Type", "application/json"],
+        ["Accept", "application/json"],
+      ],
+      body: JSON.stringify({ name: this.state[`column_${id}`] })
     });
   }
 
@@ -98,40 +162,31 @@ class App extends Component {
     const { boards } = this.state;
     const boardsView = boards.map(board => {
 
-      return (<div className="boardViewCard col-md-4" onClick={() => this.getBoard(board._id, board.name)}>{board.name}</div>)
+      return (
+        <div className="col-md-3" key={board._id} onClick={() => this.getBoard(board._id, board.name)}>
+          <div className="boardViewCard">{board.name}</div>
+        </div>
+      );
     });
 
     return (
       <div className="container">
-        <h2>Boards</h2>
+        <h2><span className="icon-lg icon-member"></span>Boards</h2>
         <div className="row">
           {boardsView}
-          <div className="boardCreationCard col-md-4" data-toggle="modal" data-target="#exampleModal">Create board...</div>
-        </div>
-        <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">Add Board Title</h5>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <form>
-                  <div className="form-group">
-                    <label htmlFor="message-text" className="col-form-label">Title:</label>
-                    <input className="form-control" id="newBoard" onChange={(e) => this.handleChange(e)}></input>
-                  </div>
-                </form>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={() => this.createBoard()}>Create</button>
-              </div>
-            </div>
+          <div className="col-md-3">
+            <div className="boardCreationCard" data-toggle="modal" data-target="#boardModal">Create board...</div>
           </div>
         </div>
+        <EntityCreationModal
+          modalId="boardModal"
+          title="Add Board Title"
+          label="Title:"
+          handleChange={(e) => this.handleChange(e)}
+          value={this.state.newBoard}
+          onCreate={() => this.createBoard()}
+          valueId="newBoard"
+        />
       </div>
     );
   }
@@ -140,22 +195,55 @@ class App extends Component {
     const { cards, columns, currentBoard } = this.state;
 
     const columnsView = columns.map(column => {
-      const cardsView = cards.map(card => {
-        return (<div className="card">{card.name}</div>);
+      const cardsView = cards.filter(card => card.column === column._id).map(card => {
+        return (
+          <Fragment>
+            <div className="card" key={card._id} data-toggle="modal" data-target={`#cardView${card._id}`}>{card.name}</div>
+            <CardViewModal card={card}/>
+          </Fragment>
+        );
       });
 
       return (
-        <div className="column">
-          <h3>{column.name}</h3>
-          {cardsView} 
+        <div className="col-md-4 column-container" key={column._id}>
+          <div className="column">
+            <textarea className="form-control column-name" id={`column_${column._id}`} onChange={(e) => this.handleChange(e)} onBlur={() => this.submitColumnChange(column._id)} value={column.name}></textarea>
+            <div className="cards-container">
+              {cardsView} 
+              <div className="card card-create" data-toggle="modal" data-target={`#cardModal${column._id}`}>Add a card...</div>
+            </div>
+            <EntityCreationModal
+              modalId={`cardModal${column._id}`}
+              title="Add Card Name"
+              label="Name:"
+              handleChange={(e) => this.handleChange(e)}
+              value={this.state.newCard}
+              onCreate={() => this.createCard(column._id)}
+              valueId="newCard"
+            />
+          </div>
         </div>
       );
     });
 
     return (
-      <div className="container">
+      <div className="container board-container">
         <h2>{currentBoard}</h2>
-        {columnsView}
+        <div className="row noWrap">
+          {columnsView}
+          <div className="col-md-4 column-container">
+            <div className="boardCreationCard" data-toggle="modal" data-target="#columnModal">Add a column...</div>
+          </div>
+        </div>
+        <EntityCreationModal
+          modalId="columnModal"
+          title="Add Column Name"
+          label="Name:"
+          handleChange={(e) => this.handleChange(e)}
+          value={this.state.newColumn}
+          onCreate={() => this.createColumn()}
+          valueId="newColumn"
+        />
       </div>
     );
   }
@@ -164,6 +252,7 @@ class App extends Component {
     const { boardsView, boardView, cardView } = this.state;
     const JSX = (
       <Fragment>
+        <div className="card-header text-center"> <span className="title" onClick={() => this.returnToBoardsView()}><b>Taco</b></span></div>
         { boardsView && this.renderBoardsView() }
         { boardView && this.renderBoard() }
         { cardView && this.renderCard() }
