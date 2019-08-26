@@ -8,9 +8,9 @@ const cardSchema = new mongoose.Schema({
     description: {
         type: String
     },
-    activity: {
-        type: Array
-    },
+    activity: [{
+        type: String
+    }],
     column: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Column'

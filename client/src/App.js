@@ -31,6 +31,18 @@ const EntityCreationModal = (props) => {
 }
 
 const CardViewModal = (props) => {
+  const activity = props.card.activity.map(x => {
+    let replaced = x;
+    if(replaced.includes('{{') || replaced.includes('}}')){
+      let id = replaced.substring(replaced.indexOf('{{')+2, replaced.indexOf('}}'));
+      console.log(id);
+      let columnName = props.columns.find(x => x._id === id).name;
+      replaced = replaced.replace(`{{${id}}}`, columnName);
+    }
+    return (
+      <p className="entry">{replaced}</p>
+    );
+  });
   return (
     <div className="modal fade" id={`cardView${props.card._id}`} tabIndex="-1" role="dialog" aria-labelledby={`${props.card._id}Label`} aria-hidden="true">
       <div className="modal-dialog modal-lg">
@@ -42,8 +54,12 @@ const CardViewModal = (props) => {
             </button>
           </div>
           <div className="modal-body">
-            <h5>Description</h5>
-            <p>{props.card.description || ''}</p>
+            <p className="subtitle">Description</p>
+            <textarea className="form-control column-name" id={`description_${props.card._id}`} onChange={props.handleChange} onBlur={props.submitCardChange} >{props.card.description || ''}</textarea>
+            <p className="subtitle">Activity</p>
+            <p className="content">
+              {activity}
+            </p>
           </div>
         </div>
       </div>
@@ -134,13 +150,14 @@ class App extends Component {
   }
 
   createCard(columnId) {
+    const activity = `You added this card to {{${columnId}}}.`;
     fetch(`http://localhost:5000/api/cards/`, {
       method: "POST",
       headers: [
         ["Content-Type", "application/json"],
         ["Accept", "application/json"],
       ],
-      body: JSON.stringify({ name: this.state.newCard, board: this.state.currentBoardId, column: columnId })
+      body: JSON.stringify({ name: this.state.newCard, board: this.state.currentBoardId, column: columnId, activity: [activity] })
     }).then(response => response.json())
     .then(response => {
       this.setState({cards: [...this.state.cards, response], newCard: ''});
@@ -155,6 +172,17 @@ class App extends Component {
         ["Accept", "application/json"],
       ],
       body: JSON.stringify({ name: this.state[`column_${id}`] })
+    });
+  }
+
+  submitCardChange(id, changeType) {
+    fetch(`http://localhost:5000/api/cards/${id}`, {
+      method: "PUT",
+      headers: [
+        ["Content-Type", "application/json"],
+        ["Accept", "application/json"],
+      ],
+      body: JSON.stringify({ description: this.state[`description_${id}`] })
     });
   }
 
@@ -199,7 +227,7 @@ class App extends Component {
         return (
           <Fragment>
             <div className="card" key={card._id} data-toggle="modal" data-target={`#cardView${card._id}`}>{card.name}</div>
-            <CardViewModal card={card}/>
+            <CardViewModal card={card} columns={this.state.columns} handleChange={(e) => this.handleChange(e)} submitCardChange={() => this.submitCardChange(card._id)} />
           </Fragment>
         );
       });
@@ -207,7 +235,7 @@ class App extends Component {
       return (
         <div className="col-md-4 column-container" key={column._id}>
           <div className="column">
-            <textarea className="form-control column-name" id={`column_${column._id}`} onChange={(e) => this.handleChange(e)} onBlur={() => this.submitColumnChange(column._id)} value={column.name}></textarea>
+            <textarea className="form-control column-name" id={`column_${column._id}`} onChange={(e) => this.handleChange(e)} onBlur={() => this.submitColumnChange(column._id)} >{column.name}</textarea>
             <div className="cards-container">
               {cardsView} 
               <div className="card card-create" data-toggle="modal" data-target={`#cardModal${column._id}`}>Add a card...</div>
