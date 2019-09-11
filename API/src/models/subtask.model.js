@@ -13,6 +13,14 @@ const subtaskSchema = new Schema({
         type: Boolean,
         default: false
     }
-});  
+});
+
+subtaskSchema.statics.findByCardId = async function (id) {
+    let subtasks = await this.find({
+      card: id,
+    });
+  
+    return subtasks;
+};
 
 export default model('Subtask', subtaskSchema);

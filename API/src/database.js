@@ -10,8 +10,9 @@ const Board = require('./models/board.model').default;
 const Column = require('./models/column.model').default;
 const Card = require('./models/card.model').default;
 const User = require('./models/user.model').default;
+const Subtask = require('./models/subtask.model').default;
 
-const models = { Board, Column, Card, User };
+const models = { Board, Column, Card, User, Subtask };
 
 const connectDb = () => {
     return mongoose.connect(uri, { useNewUrlParser: true });
