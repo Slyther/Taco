@@ -2,12 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-    const card = await req.context.models.Card.create({
-        name: req.body.name,
-        column: req.body.column,
-        board: req.body.board,
-        activity: req.body.activity
-    });
+    const card = await req.context.models.Card.create(req.body);
 
     return res.send(card);
 });

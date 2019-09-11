@@ -2,14 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-    const board = await req.context.models.Board.create({
-        name: req.body.name
-    }).catch((err) => {
+    const board = await req.context.models.Board.create(req.body)
+    .catch((err) => {
         console.log(err.code);
         if(err.code === 11000) {
             return { errorMessage: "Another board already exists with this name." };
         }
     });
+
+    const user = await req.context.models.User.findById(req.body.owner);
+    user.boards.push(board._id);
+    user.save();
 
     return res.send(board);
 });

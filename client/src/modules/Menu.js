@@ -21,10 +21,10 @@ const Menu = (props) => {
                 !props.isLoggedIn && 
                 <Fragment>
                     <li className={`nav-item ${props.loginView ? 'active' : ''}`}>
-                        <a className="nav-link" href="#na" onClick={props.redirectToLogin}>Login</a>
+                        <a className="nav-link" href="#na" onClick={props.redirectToLoginView}>Login</a>
                     </li>
                     <li className={`nav-item ${props.registerView ? 'active' : ''}`}>
-                        <a className="nav-link" href="#na" onClick={props.redirectToRegister}>Register</a>
+                        <a className="nav-link" href="#na" onClick={props.redirectToRegisterView}>Register</a>
                     </li>
                 </Fragment>
             }

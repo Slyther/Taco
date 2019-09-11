@@ -2,10 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-    const column = await req.context.models.Column.create({
-        name: req.body.name,
-        board: req.body.board
-    });
+    const column = await req.context.models.Column.create(req.body);
 
     return res.send(column);
 });
