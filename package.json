@@ -12,5 +12,12 @@
   },
   "dependencies": {
     "concurrently": "^4.1.2"
+  },
+  "prettier": {
+    "tabWidth": 4,
+    "singleQuote": true,
+    "jsxBracketSameLine": true,
+    "arrowParens": "always",
+    "trailingComma": "es5"
   }
 }

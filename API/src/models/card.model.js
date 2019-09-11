@@ -19,6 +19,10 @@ const cardSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Board'
     },
+    handler: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     archived: {
         type: Boolean,
         default: false

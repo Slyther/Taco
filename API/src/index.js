@@ -7,8 +7,10 @@ import models, { connectDb } from './database';
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-app.options('*', cors());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+}));
 app.use((req, res, next) => {
     req.context = {
         models
@@ -18,7 +20,7 @@ app.use((req, res, next) => {
 app.use(session({
     secret: 'some dirty little secret',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
 }));
 
 const PORT = process.env.PORT || 5000;
@@ -29,7 +31,7 @@ routes.forEach(route => {
     app.use(`/api/${route}`, require(`./routes/api/${route}`));
 });
 
-const erasaDatabaseOnSync = true;
+const erasaDatabaseOnSync = false;
 
 connectDb().then(async () => {
     if(erasaDatabaseOnSync) {

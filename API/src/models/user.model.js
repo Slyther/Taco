@@ -58,9 +58,16 @@ userSchema.statics.prepareSecretInfo = function(toPrepare) {
 }
 
 userSchema.statics.validateLogin = async function(toCheck) {
-    let user = await this.findOne({$or:[{ username: toCheck.username }, { email: toCheck.email }]});
+    let user = await this.findOne({ email: toCheck.email });
+    if(!user)
+        return false;
     let saltedPassword = sha256(toCheck.password + user.salt);
     return user.password === saltedPassword;
+}
+
+userSchema.statics.getUserByEmail = async function(u) {
+    let user = await this.findOne({ email: u }).populate('boards');
+    return user;
 }
 
 export default model('User', userSchema);

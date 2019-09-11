@@ -15,10 +15,10 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     let isValidLogin = await req.context.models.User.validateLogin(req.body);
     if (isValidLogin) {
-        req.session.username = req.body.username;
-        req.session.email = req.body.email;
+        let user = await req.context.models.User.getUserByEmail(req.body.email);
+        req.session.email = user.email;
         req.session.isLoggedIn = true;
-        return res.send({"msg": "success"});
+        return res.send({ boards: user.boards, active: user.active, email: user.email, username: user.username, id: user.id });
     }
 
     return res.send({"msg": "Incorrect login info."});
@@ -26,7 +26,8 @@ router.post('/login', async (req, res) => {
 
 router.get('/login', async (req, res) => {
     if(req.session.isLoggedIn){
-        return res.send({ username: req.session.username, email: req.session.email});
+        let user = await req.context.models.User.getUserByEmail(req.session.email);
+        return res.send({ boards: user.boards, active: user.active, email: user.email, username: user.username, id: user.id });
     }
     return res.send({"msg": "Not logged in."});
 });

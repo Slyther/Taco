@@ -129,3 +129,17 @@ h2{
     max-width: unset;
   }
 }
+
+.login-card {
+  margin: 50px auto !important;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 1px 1px 5px black;
+  &:hover {
+    cursor: default;
+    background: #181a1b;
+  }
+  .card-title {
+    text-align: center;
+  }
+}
