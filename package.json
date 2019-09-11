@@ -1,4 +1,7 @@
 {
+  "scripts": {
+		"start": "concurrently --kill-others \"yarn --cwd ./api start\" \"yarn --cwd ./client start\""
+	},
   "devDependencies": {
     "eslint": "^6.2.2",
     "eslint-plugin-flowtype": "^4.2.0",
@@ -6,5 +9,8 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^2.0.1"
+  },
+  "dependencies": {
+    "concurrently": "^4.1.2"
   }
 }

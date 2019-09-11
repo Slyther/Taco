@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const cardSchema = new mongoose.Schema({
+const cardSchema = new Schema({
     name: {
         type: String,
         require: true,
@@ -12,12 +12,16 @@ const cardSchema = new mongoose.Schema({
         type: String
     }],
     column: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Column'
     },
     board: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Board'
+    },
+    archived: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -28,6 +32,5 @@ cardSchema.statics.findByBoardId = async function (id) {
   
     return cards;
 };
-  
 
-module.exports = mongoose.model('Card', cardSchema);
+export default model('Card', cardSchema);

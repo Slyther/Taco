@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const session = require('express-session');
 import models, { connectDb } from './database';
 
 app.use(express.json());
@@ -14,10 +15,15 @@ app.use((req, res, next) => {
     };
     next();
 });
+app.use(session({
+    secret: 'some dirty little secret',
+    resave: false,
+    saveUninitialized: false
+}));
 
 const PORT = process.env.PORT || 5000;
 
-const routes = ['boards', 'columns', 'cards'];
+const routes = ['boards', 'columns', 'cards', 'users'];
 
 routes.forEach(route => {
     app.use(`/api/${route}`, require(`./routes/api/${route}`));

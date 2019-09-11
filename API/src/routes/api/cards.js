@@ -27,7 +27,7 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     const card = await req.context.models.Card.findById(req.params.id);
-    console.log('here!');
+    let result = null;
     if(card) {
         result = await card.remove();
     }

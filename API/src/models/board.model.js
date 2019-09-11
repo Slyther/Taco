@@ -1,10 +1,22 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const boardSchema = new mongoose.Schema({
+const boardSchema = new Schema({
     name: {
         type: String,
         require: true,
         unique: true
+    },
+    owner: {
+        type: Schema.Types.ObjectId, 
+        ref: 'User' 
+    },
+    users: [{ 
+        type: Schema.Types.ObjectId, 
+        ref: 'User' 
+    }],
+    archived: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -15,4 +27,4 @@ boardSchema.pre('remove', function(next) {
     next();
 });
 
-module.exports = mongoose.model('Board', boardSchema);
+export default model('Board', boardSchema);

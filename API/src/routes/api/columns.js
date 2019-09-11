@@ -25,7 +25,7 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     const column = await req.context.models.Column.findById(req.params.id);
-
+    let result = null;
     if(column) {
         result = await column.remove();
     }

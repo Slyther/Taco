@@ -1,13 +1,17 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const columnSchema = new mongoose.Schema({
+const columnSchema = new Schema({
     name: {
         type: String,
         require: true,
     },
     board: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Board'
+    },
+    archived: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -23,4 +27,4 @@ columnSchema.pre('remove', function(next) {
     this.model('Card').deleteMany({ column: this._id }, next);
 });
 
-module.exports = mongoose.model('Column', columnSchema);
+export default model('Column', columnSchema);
