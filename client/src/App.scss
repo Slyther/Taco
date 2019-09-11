@@ -118,6 +118,25 @@ h2{
   }
 }
 
+.card-description {
+  font-size: 16px;
+    font-weight: 400;
+    resize: none;
+    color: white;
+    background: #1e2538;
+    min-height: 100px;
+    &:not(:focus) {
+      border: none;
+      overflow: auto;
+      outline: none;
+      background: #1e2538;
+      cursor: pointer;
+    }
+    &:focus {
+      background: black;
+    }
+}
+
 .noWrap {
   flex-wrap: nowrap;
 }
