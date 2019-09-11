@@ -212,7 +212,7 @@ class App extends Component {
                 {loginView && <Login onLogin={this.handleLogin} />}
                 {registerView && <Register onRegister={this.redirectToLoginView} />}
                 {boardsView && <BoardsView getBoard={this.getBoard.bind(this)} boards={boards} userInfo={userInfo} createBoard={this.createBoard.bind(this)}/>}
-                {boardView && <BoardView cards={cards} columns={columns} currentBoard={currentBoard} currentBoardId={currentBoardId}/>}
+                {boardView && <BoardView cards={cards} columns={columns} currentBoard={currentBoard} currentBoardId={currentBoardId} userInfo={userInfo}/>}
                 {cardView && <CardModal/>}
             </Fragment>
         );

@@ -6,6 +6,7 @@ class Register extends Component {
         this.state = {
             email: '',
             password: '',
+            username: '',
             validationResult: []
         };
     }
@@ -22,7 +23,7 @@ class Register extends Component {
                 ['Accept', 'application/json'],
             ],
             credentials: 'include',
-            body: JSON.stringify({ email: this.state.email, password: this.state.password }),
+            body: JSON.stringify({ email: this.state.email, password: this.state.password, username: this.state.username}),
         })
         .then((response) => response.json())
         .then((response) => {
@@ -43,6 +44,8 @@ class Register extends Component {
                         <div className="form-group">
                             <label htmlFor="email" className="col-form-label">E-mail:</label>
                             <input className="form-control" id="email" onChange={this.handleChange} value={this.state.email}></input>
+                            <label htmlFor="username" className="col-form-label">Username:</label>
+                            <input className="form-control" id="username" onChange={this.handleChange} value={this.state.username}></input>
                             <label htmlFor="password" className="col-form-label">Password:</label>
                             <input className="form-control" id="password" type="password" onChange={this.handleChange} value={this.state.password}></input>
                         </div>

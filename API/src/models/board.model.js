@@ -3,8 +3,7 @@ import { Schema, model } from 'mongoose';
 const boardSchema = new Schema({
     name: {
         type: String,
-        require: true,
-        unique: true
+        require: true
     },
     owner: {
         type: Schema.Types.ObjectId, 

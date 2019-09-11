@@ -1,40 +1,44 @@
-import React from 'react';
+import React, {Component} from 'react';
+import StringEntityReplacementService from '../services/StringEntityReplacementService'
 
-const CardModal = (props) => {
-    const activity = props.card.activity.map(x => {
-      let replaced = x;
-      if(replaced.includes('{{') || replaced.includes('}}')){
-        let id = replaced.substring(replaced.indexOf('{{')+2, replaced.indexOf('}}'));
-        console.log(id);
-        let columnName = props.columns.find(x => x._id === id).name;
-        replaced = replaced.replace(`{{${id}}}`, columnName);
+class CardModal extends Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        resolvedActivity: []
       }
+      this.resolveActivity(props.card.activity);
+    }
+
+    resolveActivity(activity) {
+      Promise.all(activity.map(x => StringEntityReplacementService.replace(x))).then(act => {
+        this.setState({resolvedActivity: act});
+      });
+    }
+
+    render() {
       return (
-        <p className="entry">{replaced}</p>
-      );
-    });
-    return (
-      <div className="modal fade" id={`cardView${props.card._id}`} tabIndex="-1" role="dialog" aria-labelledby={`${props.card._id}Label`} aria-hidden="true">
-        <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id={`${props.card._id}Label`}>{props.card.name}</h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <p className="subtitle">Description</p>
-              <textarea className="form-control column-name" id={`description_${props.card._id}`} onChange={props.handleChange} onBlur={props.submitCardChange} >{props.card.description || ''}</textarea>
-              <p className="subtitle">Activity</p>
-              <p className="content">
-                {activity}
-              </p>
+        <div className="modal fade" id={`cardView${this.props.card._id}`} tabIndex="-1" role="dialog" aria-labelledby={`${this.props.card._id}Label`} aria-hidden="true">
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id={`${this.props.card._id}Label`}>{this.props.card.name}</h5>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <p className="subtitle">Description</p>
+                <textarea className="form-control column-name" id={`description_${this.props.card._id}`} onChange={this.props.handleChange} onBlur={this.props.submitCardChange} >{this.props.card.description || ''}</textarea>
+                <p className="subtitle">Activity</p>
+                <p className="content">
+                  {this.state.resolvedActivity}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
-
   export default CardModal;

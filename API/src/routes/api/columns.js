@@ -13,6 +13,12 @@ router.get('/:id', async (req, res) => {
     return res.send(columns);
 });
 
+router.get('/column/:id', async (req, res) => {
+    const columns = await req.context.models.Column.findById(req.params.id);
+
+    return res.send(columns);
+});
+
 router.put('/:id', async (req, res) => {
     let column = await req.context.models.Column.findById(req.params.id);
     let updatedColumn = await req.context.models.Column.updateOne(column, req.body);

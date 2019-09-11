@@ -13,6 +13,12 @@ router.get('/:id', async (req, res) => {
     return res.send(cards);
 });
 
+router.get('/card/:id', async (req, res) => {
+    const cards = await req.context.models.Card.findById(req.params.id);
+
+    return res.send(cards);
+});
+
 router.put('/:id', async (req, res) => {
     let card = await req.context.models.Card.findById(req.params.id);
     let updatedCard = await req.context.models.Card.updateOne(card, req.body);

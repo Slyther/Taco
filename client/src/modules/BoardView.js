@@ -9,7 +9,8 @@ class BoardView extends Component {
             cards: [...props.cards],
             columns: [...props.columns],
             currentBoard: props.currentBoard,
-            currentBoardId: props.currentBoardId
+            currentBoardId: props.currentBoardId,
+            userInfo: {...props.userInfo}
         }
     }
 
@@ -44,7 +45,7 @@ class BoardView extends Component {
     }
 
     createCard(columnId) {
-        const activity = `You added this card to {{${columnId}}}.`;
+        const activity = `{{user:${this.state.userInfo.id}}} added this card to {{column:${columnId}}}.`;
         fetch(`http://localhost:5000/api/cards/`, {
             method: 'POST',
             headers: [
