@@ -32,6 +32,33 @@ class BoardView extends Component {
         });
     }
 
+    changeColumn(cardId, columnId) {
+        fetch(`http://localhost:5000/api/cards/${cardId}`, {
+            method: 'PUT',
+            headers: [
+                ['Content-Type', 'application/json'],
+                ['Accept', 'application/json'],
+            ],
+            credentials: 'include',
+            body: JSON.stringify({
+                column: columnId,
+            })
+        }).then((response) => {
+            fetch(`http://localhost:5000/api/cards/${this.state.currentBoardId}`, {
+                method: 'GET',
+                headers: [
+                    ['Content-Type', 'application/json'],
+                    ['Accept', 'application/json'],
+                ],
+                credentials: 'include'
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                this.setState({cards: [...response]});
+            });
+        });
+    }
+
     submitColumnChange(id) {
         fetch(`http://localhost:5000/api/columns/${id}`, {
             method: 'PUT',
@@ -113,6 +140,9 @@ class BoardView extends Component {
                                 handleChange={(e) => this.handleChange(e)}
                                 submitCardChange={() =>
                                     this.submitCardChange(card._id)
+                                }
+                                changeColumn={(cardId, columnId) =>
+                                    this.changeColumn(cardId, columnId)
                                 }
                             />
                         </Fragment>

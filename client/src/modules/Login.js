@@ -13,7 +13,8 @@ class Login extends Component {
         this.setState({ [e.target.id]: e.target.value });
     };
 
-    submitLogin = () => {
+    submitLogin = (e) => {
+        e.preventDefault();
         fetch(`http://localhost:5000/api/users/login/`, {
             method: 'POST',
             headers: [
@@ -35,7 +36,7 @@ class Login extends Component {
         return (
             <Fragment>
                 <div className="card login-card">
-                    <form className="card-body" onSubmit={() => this.submitLogin()}>
+                    <form className="card-body" onSubmit={(e) => this.submitLogin(e)}>
                         <h3 className="card-title">Log In</h3>
                         <div className="form-group">
                             <label htmlFor="email" className="col-form-label">E-mail:</label>
