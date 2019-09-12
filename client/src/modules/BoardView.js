@@ -32,8 +32,8 @@ class BoardView extends Component {
         });
     }
 
-    changeColumn(cardId, columnId) {
-        fetch(`http://localhost:5000/api/cards/${cardId}`, {
+    changeColumn(card, columnId) {
+        fetch(`http://localhost:5000/api/cards/${card._id}`, {
             method: 'PUT',
             headers: [
                 ['Content-Type', 'application/json'],
@@ -42,6 +42,35 @@ class BoardView extends Component {
             credentials: 'include',
             body: JSON.stringify({
                 column: columnId,
+                activity: [...card.activity, `{{user:${this.props.userInfo.id}}} moved this card from {{column:${card.column}}} to {{column:${columnId}}}`]
+            })
+        }).then((response) => {
+            fetch(`http://localhost:5000/api/cards/${this.state.currentBoardId}`, {
+                method: 'GET',
+                headers: [
+                    ['Content-Type', 'application/json'],
+                    ['Accept', 'application/json'],
+                ],
+                credentials: 'include'
+            })
+            .then((response) => response.json())
+            .then((response) => {
+                this.setState({cards: [...response]});
+            });
+        });
+    }
+
+    assignUser(card, userId) {
+        fetch(`http://localhost:5000/api/cards/${card._id}`, {
+            method: 'PUT',
+            headers: [
+                ['Content-Type', 'application/json'],
+                ['Accept', 'application/json'],
+            ],
+            credentials: 'include',
+            body: JSON.stringify({
+                handler: userId,
+                activity: [...card.activity, `{{user:${this.props.userInfo.id}}} assigned this card to {{user:${userId}}}`]
             })
         }).then((response) => {
             fetch(`http://localhost:5000/api/cards/${this.state.currentBoardId}`, {
@@ -137,12 +166,16 @@ class BoardView extends Component {
                             <CardModal
                                 card={card}
                                 columns={this.state.columns}
+                                currentBoard={this.props.currentBoardObject}
                                 handleChange={(e) => this.handleChange(e)}
                                 submitCardChange={() =>
                                     this.submitCardChange(card._id)
                                 }
-                                changeColumn={(cardId, columnId) =>
-                                    this.changeColumn(cardId, columnId)
+                                changeColumn={(card, columnId) =>
+                                    this.changeColumn(card, columnId)
+                                }
+                                assignUser={(card, userId) =>
+                                    this.assignUser(card, userId)
                                 }
                             />
                         </Fragment>

@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    const board = await req.context.models.Board.findById(req.params.id);
+    const board = await req.context.models.Board.findById(req.params.id).populate('users');
 
     return res.send(board);
 });

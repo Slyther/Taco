@@ -138,27 +138,36 @@ class App extends Component {
     };
 
     getBoard(id, name) {
-        fetch(`http://localhost:5000/api/columns/${id}`, {
+        fetch(`http://localhost:5000/api/boards/${id}`, {
             method: 'GET',
             credentials: 'include',
         })
-            .then((response) => response.json())
-            .then((response) => {
-                fetch(`http://localhost:5000/api/cards/${id}`, {
-                    method: 'GET',
-                })
-                    .then((response2) => response2.json())
-                    .then((response2) => {
-                        this.setState({
-                            cards: [...response2],
-                            columns: [...response],
-                            boardsView: false,
-                            boardView: true,
-                            currentBoard: name,
-                            currentBoardId: id,
-                        });
-                    });
-            });
+        .then((response) => response.json())
+        .then((response) => {
+          fetch(`http://localhost:5000/api/columns/${id}`, {
+            method: 'GET',
+            credentials: 'include',
+        })
+          .then((response2) => response2.json())
+          .then((response2) => {
+              fetch(`http://localhost:5000/api/cards/${id}`, {
+                  method: 'GET',
+                  credentials: 'include',
+              })
+              .then((response3) => response3.json())
+              .then((response3) => {
+                  this.setState({
+                      cards: [...response3],
+                      columns: [...response2],
+                      boardsView: false,
+                      boardView: true,
+                      currentBoard: name,
+                      currentBoardId: id,
+                      currentBoardObject: {...response}
+                  });
+              });
+          });
+        });
     }
 
     createBoard(boardName) {
@@ -169,7 +178,7 @@ class App extends Component {
                 ['Accept', 'application/json'],
             ],
             credentials: 'include',
-            body: JSON.stringify({ name: boardName, owner: this.state.userInfo.id }),
+            body: JSON.stringify({ name: boardName, owner: this.state.userInfo.id, users: [this.state.userInfo.id] }),
         })
             .then((response) => response.json())
             .then((response) => {
@@ -193,7 +202,8 @@ class App extends Component {
             cards,
             columns,
             currentBoardId,
-            currentBoard
+            currentBoard,
+            currentBoardObject
         } = this.state;
         const JSX = (
             <Fragment>
@@ -212,7 +222,7 @@ class App extends Component {
                 {loginView && <Login onLogin={this.handleLogin} />}
                 {registerView && <Register onRegister={this.redirectToLoginView} />}
                 {boardsView && <BoardsView getBoard={this.getBoard.bind(this)} boards={boards} userInfo={userInfo} createBoard={this.createBoard.bind(this)}/>}
-                {boardView && <BoardView cards={cards} columns={columns} currentBoard={currentBoard} currentBoardId={currentBoardId} userInfo={userInfo}/>}
+                {boardView && <BoardView cards={cards} columns={columns} currentBoard={currentBoard} currentBoardId={currentBoardId} currentBoardObject={currentBoardObject} userInfo={userInfo}/>}
                 {cardView && <CardModal/>}
             </Fragment>
         );
