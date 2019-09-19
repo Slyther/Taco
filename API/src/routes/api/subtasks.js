@@ -14,8 +14,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    let subtask = await req.context.models.Subtask.findById(req.params.id);
-    let updatedSubtask = await req.context.models.Subtask.updateOne(subtask, req.body);
+    let updatedSubtask = await req.context.models.Subtask.updateOne({_id: req.params.id}, req.body);
     
     return res.send(updatedSubtask);
 });

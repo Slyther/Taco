@@ -1,26 +1,26 @@
 import React, { Component } from 'react';
 import { Modal, DropdownButton, Dropdown } from 'react-bootstrap';
-import StringEntityReplacementService from '../services/StringEntityReplacementService';
 
 class CardModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
       resolvedActivity: [],
+      card: props.card,
     };
-    this.resolveActivity(props.card.activity);
   }
 
-  resolveActivity(activity) {
-    Promise.all(
-      activity.map((x) => StringEntityReplacementService.replace(x))
-    ).then((act) => {
-      this.setState({ resolvedActivity: act });
-    });
+  static getDerivedStateFromProps(props, state) {
+    if (props.card.activity.length !== state.card.activity.length){
+      return {
+        card: props.card
+      };
+    }
+    return null;
   }
 
   render() {
-    const columnsJSX = this.props.columns
+    let columnsJSX = this.props.columns
       .filter((column) => this.props.card.column !== column._id)
       .map((column) => {
         return (
@@ -34,7 +34,7 @@ class CardModal extends Component {
         );
       });
 
-    const usersJSX = this.props.currentBoard.users
+    let usersJSX = this.props.currentBoard.users
       .filter((user) => this.props.card.handler !== user._id)
       .map((user) => {
         return (
@@ -45,6 +45,11 @@ class CardModal extends Component {
           </Dropdown.Item>
         );
       });
+
+    if(columnsJSX.length === 0)
+      columnsJSX = (<Dropdown.Item>No Columns Available</Dropdown.Item>)
+    if(usersJSX.length === 0)
+      usersJSX = (<Dropdown.Item>No users Available</Dropdown.Item>)
 
     let currentUser = this.props.currentBoard.users.find(
       (x) => x._id === this.props.card.handler
@@ -73,7 +78,7 @@ class CardModal extends Component {
             </textarea>
             <h6 className="subtitle">Activity</h6>
             <div className="content">
-              {this.state.resolvedActivity.map((act) => {
+              {this.props.card.activity.map((act) => {
                 return (
                   <p key={act} className="activity-entry">
                     {act}

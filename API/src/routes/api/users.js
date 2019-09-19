@@ -44,8 +44,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    let user = await req.context.models.User.findById(req.params.id);
-    let updatedUser = await req.context.models.User.updateOne(user, req.body);
+    let updatedUser = await req.context.models.User.updateOne({_id: req.params.id}, req.body);
     
     return res.send(updatedUser);
 });

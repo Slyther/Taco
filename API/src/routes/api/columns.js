@@ -20,8 +20,7 @@ router.get('/column/:id', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    let column = await req.context.models.Column.findById(req.params.id);
-    let updatedColumn = await req.context.models.Column.updateOne(column, req.body);
+    let updatedColumn = await req.context.models.Column.updateOne({_id: req.params.id}, req.body);
     
     return res.send(updatedColumn);
 });

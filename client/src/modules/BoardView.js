@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import CardModal from './CardModal';
 import InputModal from '../components/InputModal';
 
@@ -90,7 +90,7 @@ class BoardView extends Component {
         column: columnId,
         activity: [
           ...card.activity,
-          `{{user:${this.props.userInfo.id}}} moved this card from {{column:${card.column}}} to {{column:${columnId}}}`,
+          `{{User:${this.props.userInfo.id}}} moved this card from {{Column:${card.column}}} to {{Column:${columnId}}}`,
         ],
       }),
     }).then((response) => {
@@ -121,7 +121,7 @@ class BoardView extends Component {
         handler: userId,
         activity: [
           ...card.activity,
-          `{{user:${this.props.userInfo.id}}} assigned this card to {{user:${userId}}}`,
+          `{{User:${this.props.userInfo.id}}} assigned this card to {{User:${userId}}}`,
         ],
       }),
     }).then((response) => {
@@ -135,7 +135,7 @@ class BoardView extends Component {
       })
         .then((response) => response.json())
         .then((response) => {
-          this.setState({ cards: [...response] });
+          this.setState({ cards: [...response], cardModal: { card: response.find(x => x._id === this.state.cardModal.card._id)} });
         });
     });
   }
@@ -153,7 +153,7 @@ class BoardView extends Component {
   }
 
   createCard(columnId) {
-    const activity = `{{user:${this.state.userInfo.id}}} added this card to {{column:${columnId}}}.`;
+    const activity = `{{User:${this.state.userInfo.id}}} added this card to {{Column:${columnId}}}.`;
     fetch(`http://localhost:5000/api/cards/`, {
       method: 'POST',
       headers: [

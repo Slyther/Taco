@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import StringEntityReplacementService from '../services/StringEntityReplacementService';
 
 const cardSchema = new Schema({
     name: {
@@ -36,5 +37,13 @@ cardSchema.statics.findByBoardId = async function (id) {
   
     return cards;
 };
+
+cardSchema.statics.resolveActivity = async function(activity, models) {
+    return Promise.all(
+        activity.map(async (x) => StringEntityReplacementService.replace(x, models))
+    ).then((act) => {
+        return act;
+    });
+}
 
 export default model('Card', cardSchema);
