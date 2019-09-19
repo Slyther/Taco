@@ -1,32 +1,37 @@
 import React from 'react';
+import { Modal, Button, Form } from 'react-bootstrap';
 
 const InputModal = (props) => {
-    return (
-      <div className="modal fade" id={props.modalId} tabIndex="-1" role="dialog" aria-labelledby={`${props.modalId}Label`} aria-hidden="true">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id={`${props.modalId}Label`}>{props.title}</h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              <form>
-                <div className="form-group">
-                  <label htmlFor="message-text" className="col-form-label">{props.label}</label>
-                  <input className="form-control" id={props.valueId} onChange={props.handleChange} value={props.value || ''}></input>
-                </div>
-              </form>
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={props.onCreate}>Create</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <Modal show={props.show} onHide={props.closeModal}>
+      <Modal.Header closeButton>
+        <Modal.Title>{props.title}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              props.onCreate();
+            }
+          }}>
+          <Form.Group controlId={props.valueId}>
+            <Form.Label>{props.label}</Form.Label>
+            <Form.Control
+              onChange={props.handleChange}
+              value={props.value || ''}></Form.Control>
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={props.closeModal}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={props.onCreate}>
+          Save Changes
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
 
-  export default InputModal;
+export default InputModal;
