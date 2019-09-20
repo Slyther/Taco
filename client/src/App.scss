@@ -94,7 +94,7 @@ h2{
         cursor: pointer;
       }
       &:focus {
-        background: black;
+        background: #181a1b;
       }
     }
   }
@@ -126,19 +126,40 @@ h2{
     margin-bottom: 30px;
     resize: none;
     color: white;
-    background: #1e2538;
+    background: #283149;
     min-height: 100px;
     &:not(:focus) {
       border: none;
       overflow: auto;
       outline: none;
-      background: #1e2538;
+      background: #283149;
       cursor: pointer;
     }
     &:focus {
-      background: black;
+      background: #1e2538;
       color: white;
     }
+}
+
+.activity-input {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 30px;
+  resize: none;
+  color: white;
+  background: #1e2538;
+  // min-height: 100px;
+  &:not(:focus) {
+    border: none;
+    overflow: auto;
+    outline: none;
+    background: #1e2538;
+    cursor: pointer;
+  }
+  &:focus {
+    background: #1e2538;
+    color: white;
+  }
 }
 
 .mrg-top-30 {

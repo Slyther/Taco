@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 
-const username = 'TacoAccess';
-const password = 'JvuOZ84xIwn8GRpI';
-const server = 'cluster0-sjxrw.mongodb.net';
-const database = 'TacoBoard';
+require('dotenv').config({path: `${__dirname}\\environments\\${process.env.NODE_ENV.trim()}.env`})
+
+const username = process.env.DBUSER;
+const password = process.env.DBPASSWORD;
+const server = process.env.DBSERVER;
+const database = process.env.DBNAME;
 const uri = `mongodb+srv://${username}:${password}@${server}/${database}?retryWrites=true&w=majority`;
 
 const Board = require('./models/board.model').default;

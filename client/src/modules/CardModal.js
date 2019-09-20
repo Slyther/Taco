@@ -4,6 +4,8 @@ import { Modal, DropdownButton, Dropdown } from 'react-bootstrap';
 class CardModal extends Component {
   constructor(props) {
     super(props);
+    this.cardDescription = React.createRef();
+    // this.commentInput = React.createRef();
     this.state = {
       resolvedActivity: [],
       card: props.card,
@@ -17,6 +19,15 @@ class CardModal extends Component {
       };
     }
     return null;
+  }
+
+  resizeTextArea = (textArea) => {
+    textArea.style.height = "1px";
+    textArea.style.height = (10+textArea.scrollHeight)+"px";
+  }
+
+  componentDidMount() {
+    this.resizeTextArea(this.cardDescription.current);
   }
 
   render() {
@@ -73,10 +84,20 @@ class CardModal extends Component {
               id={`description_${this.props.card._id}`}
               onChange={this.props.handleChange}
               onBlur={this.props.submitCardChange}
+              ref={this.cardDescription}
+              onKeyUp={() => this.resizeTextArea(this.cardDescription.current)}
               placeholder="Write a description here.">
               {this.props.card.description || ''}
             </textarea>
             <h6 className="subtitle">Activity</h6>
+            {/* <textarea
+              className="form-control activity-input"
+              id={`comment_${this.props.card._id}`}
+              onChange={this.props.handleChange}
+              ref={this.commentInput}
+              onKeyUp={() => this.resizeTextArea(this.commentInput.current)}
+              placeholder="Write a comment...">
+            </textarea> */}
             <div className="content">
               {this.props.card.activity.map((act) => {
                 return (
