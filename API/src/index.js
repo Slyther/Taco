@@ -36,7 +36,7 @@ routes.forEach(route => {
 const erasaDatabaseOnSync = process.env.DELETEDB;
 
 connectDb().then(async () => {
-    if(erasaDatabaseOnSync) {
+    if(erasaDatabaseOnSync === 'true') {
         await Promise.all([
             models.Board.deleteMany({}),
             models.Column.deleteMany({}),
