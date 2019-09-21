@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import {NavDropdown} from 'react-bootstrap';
 
 const Menu = (props) => {
     return (
@@ -31,15 +32,12 @@ const Menu = (props) => {
           </ul>
             {
                 props.isLoggedIn && 
-                <div className="navbar-nav nav-item dropdown col-md-2">
-                    <a className="nav-link dropdown-toggle active" href="#na" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{props.userInfo.username}</a>
-                    <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a className="dropdown-item" href="#na" onClick={props.redirectToBoardsView}>My Boards</a>
-                        <a className="dropdown-item" href="#na" onClick={props.redirectToCardsListView}>My Cards</a>
-                        <div className="dropdown-divider"></div>
-                        <a className="dropdown-item" href="#na" onClick={props.logout}>Logout</a>
-                    </div>
-                </div>
+                <NavDropdown className="navbar-nav nav-item dropdown col-md-2" title={props.userInfo.username} id="nav-dropdown">
+                    <NavDropdown.Item onClick={props.redirectToBoardsView}>My Boards</NavDropdown.Item>
+                    <NavDropdown.Item onClick={props.redirectToCardsListView}>My Cards</NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item onClick={props.logout}>Logout</NavDropdown.Item>
+                </NavDropdown>
             }
         </div>
       </nav>

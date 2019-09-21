@@ -42,6 +42,19 @@ class BoardView extends Component {
       body: JSON.stringify({
         description: this.state[`description_${id}`],
       }),
+    }).then((response) => {
+      fetch(`http://localhost:5000/api/cards/${this.state.currentBoardId}`, {
+        method: 'GET',
+        headers: [
+          ['Content-Type', 'application/json'],
+          ['Accept', 'application/json'],
+        ],
+        credentials: 'include',
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          this.setState({ cards: [...response] });
+        });
     });
   }
 
